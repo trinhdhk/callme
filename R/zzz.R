@@ -1,6 +1,10 @@
 .onLoad <- function(libname, pkgname){
   is_rstudio <- rstudioapi::isAvailable()
+
   if (is_rstudio){
+    # This is exactly identical to the default .rs.getNames
+    # I don't know why that one does not work
+    # So I re-define it (by copy and paste the code)
     assign(".rs.getNames",
            function(object){
              tryCatch({
@@ -16,5 +20,5 @@
 
            }, envir = environment(.rs.getNames))
   }
-  cat(crayon::yellow("This is an experimental package. Use at your own risk.\n"))
+  writeLines(crayon::yellow("This is an experimental package. Use at your own risk."))
 }

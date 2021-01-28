@@ -16,12 +16,11 @@ make_callable <- function(x, call_target = ".call"){
   # build the wrapper
   # names(x[call_target]) <- ".call"
 
-  caller_env <-
-    if (mode(x) != "environment") list2env(x)
+
+  if (mode(x) != "environment") caller_env <- list2env(x)
   else {
-    new_env <- rlang::env_clone(x, rlang::current_env())
-    class(new_env) <- class(x)
-    new_env
+    caller_env <- rlang::env_clone(x, rlang::current_env())
+    class(caller_env) <- class(x)
   }
   # browser()
   caller <-

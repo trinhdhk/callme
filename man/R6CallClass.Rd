@@ -2,7 +2,7 @@
 % Please edit documentation in R/R6_generator.R
 \name{R6CallClass}
 \alias{R6CallClass}
-\title{R6Class; just callable}
+\title{R6Class - just callable}
 \usage{
 R6CallClass(
   classname = NULL,
@@ -20,11 +20,14 @@ R6CallClass(
 )
 }
 \arguments{
-\item{classname, public, private, active, inherit, lock_objects, class, portable, lock_class, cloneable, parent_env}{See \link[R6::R6Class]{R6::R6Class} for more details}
+\item{classname, public, private, active, inherit, lock_objects, class, portable, lock_class, cloneable}{See \link[R6]{R6Class} for more details}
 
-\item{callable_object_target}{if is NULL, R6 object created is not callable. Default will point to a public method name ".call"}
+\item{callable_object_target}{if is NULL, R6 object created is not callable. Default will point to a public method name ".call". Be assured that the object created will have that target set as public method, otherwise will return an error when trigger.}
 
-\item{...}{every thing else passed to R6::R6Class}
+\item{...}{everything else passed to R6::R6Class}
+}
+\value{
+A function of class ["R6Caller", "Caller"] which itself points to an <R6ClassGenerator>
 }
 \description{
 An extension to R6::R6Class, make it callable

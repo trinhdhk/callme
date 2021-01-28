@@ -2,10 +2,10 @@
 % Please edit documentation in R/Caller.class.R
 \name{print.R6Caller}
 \alias{print.R6Caller}
-\title{Methods for R6Caller}
+\title{Methods for R6Caller object}
 \usage{
 \method{print}{R6Caller}(x, ...)
 }
 \description{
-Methods for R6Caller
+Methods for R6Caller object
 }

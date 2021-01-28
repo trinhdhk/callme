@@ -1,8 +1,9 @@
-#' R6Class; just callable
+#' R6Class - just callable
 #' @description An extension to R6::R6Class, make it callable
-#' @param classname,public,private,active,inherit,lock_objects,class,portable,lock_class,cloneable,parent_env See \link[R6::R6Class]{R6::R6Class} for more details
-#' @param ... every thing else passed to R6::R6Class
-#' @param callable_object_target if is NULL, R6 object created is not callable. Default will point to a public method name ".call"
+#' @param classname,public,private,active,inherit,lock_objects,class,portable,lock_class,cloneable See \link[R6]{R6Class} for more details
+#' @param ... everything else passed to R6::R6Class
+#' @param callable_object_target if is NULL, R6 object created is not callable. Default will point to a public method name ".call". Be assured that the object created will have that target set as public method, otherwise will return an error when trigger.
+#' @return A function of class ["R6Caller", "Caller"] which itself points to an <R6ClassGenerator>
 #' @export
 R6CallClass <-
   function(classname = NULL,
