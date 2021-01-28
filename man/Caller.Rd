@@ -14,7 +14,7 @@
 \alias{as.list.Caller}
 \title{Methods for Caller object}
 \usage{
-\method{print}{Caller}(x, .hide_target = TRUE, ...)
+\method{print}{Caller}(x, hide.dots = getOption("hide.dots", default = TRUE), ...)
 
 \method{$}{Caller}(x, y)
 

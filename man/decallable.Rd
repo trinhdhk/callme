@@ -4,7 +4,7 @@
 \alias{decallable}
 \title{De-callable a caller}
 \usage{
-decallable(x)
+decallable(x, ...)
 }
 \arguments{
 \item{x}{a caller}

@@ -16,11 +16,11 @@ print.R6Caller <- function(x,...){
 #' @rdname Caller
 #' @method print Caller
 #' @export
-print.Caller <- function(x, .hide_target=TRUE, ...){
+print.Caller <- function(x, hide.dots=getOption("hide.dots", default = TRUE), ...){
   # obj <- get("x", envir = environment(x))
   cat("Callable object at ")
   print(environment(x), ...)
-  obj <- as.list.environment(environment(x), all.names = !.hide_target)
+  obj <- as.list.environment(environment(x), all.names = !hide.dots)
   print(obj)
   invisible(x)
 }
@@ -30,9 +30,6 @@ print.Caller <- function(x, .hide_target=TRUE, ...){
 #' @export
 `$.Caller` <- function(x, y){
   env <- environment(x)
-  # obj <- get("x", envir = environment(x))
-  # y <- match(y, names(obj), nomatch = NULL)
-  # `[[`(obj, names(obj)[y])
   get(y, envir=env)
 }
 
@@ -58,7 +55,7 @@ print.Caller <- function(x, .hide_target=TRUE, ...){
 #' @export
 `[<-.Caller` <- function(x, y, ..., value){
   env <- environment(x)
-  `[<-`(env, y, ..., value)
+  `[<-`(env, y, ..., value=value)
   x
 }
 
@@ -75,7 +72,7 @@ print.Caller <- function(x, .hide_target=TRUE, ...){
 #' @export
 `[[<-.Caller` <- function(x, y, ..., value){
   env <- environment(x)
-  `[[<-`(env, y, ..., value)
+  `[[<-`(env, y, ..., value=value)
   x
 }
 
@@ -111,12 +108,30 @@ with.Caller <- function(x, expr, ...){
 #' @param x a caller
 #' @return a de-callable object
 #' @export
-decallable <- function(x){
+decallable <- function(x, ...){
   UseMethod("decallable")
 }
 
 #'@export
-decallable.Caller <- function(x){
+decallable.Caller <- function(x, ...){
+  decall_to_origin(x, ...)
+}
+
+decall_to_origin <- function(x, ...){
+  UseMethod("decall_to_origin")
+}
+
+decall_to_origin.Caller <- function(x, ...){
+  NextMethod("decall_to_origin", x, ...)
+}
+
+decall_to_origin.list <- function(x, all.names = !getOption("hide.dots", default = TRUE)){
+  origin <- as.list.Caller(x, all.names = all.names)
+  class(origin) <- class(x)[-1]
+  origin
+}
+
+decall_to_origin.default <- function(x, ...){
   environment(x)
 }
 
@@ -125,5 +140,5 @@ decallable.Caller <- function(x){
 #' @method as.list Caller
 #' @export
 as.list.Caller <- function(x, all.names=TRUE){
-  as.list.environment(decallable(x), all.names = all.names)
+  as.list.environment(environment(x), all.names = all.names)
 }

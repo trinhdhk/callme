@@ -14,9 +14,6 @@ make_callable <- function(x, call_target = ".call"){
   args <- rlang::fn_fmls(fn_target)
 
   # build the wrapper
-  # names(x[call_target]) <- ".call"
-
-
   if (mode(x) != "environment") caller_env <- list2env(x)
   else {
     caller_env <- rlang::env_clone(x, rlang::current_env())

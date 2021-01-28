@@ -30,7 +30,7 @@ R6CallClass <-
     # browser()
     if (length(callable_object_target) >= 1){
       if (length(callable_object_target) > 1){
-        warning("Multiple target found! First one is used.")
+        warning("Multiple targets found! First one is used.")
         callable_object_target <- callable_object_target[[1]]
       }
       uncallable_generator <-
@@ -48,13 +48,7 @@ make_callable_object_methods <- function(R6ClassGenerator, call_target = ".call"
   stopifnot(inherits(R6ClassGenerator, "R6ClassGenerator"))
   is_lock <- bindingIsLocked("new", R6ClassGenerator)
   if (is_lock) unlockBinding("new", R6ClassGenerator)
-  # outer_env <- environment(R6ClassGenerator$new)
-  # inner_env <- new.env(parent=outer_env, hash=FALSE)
   R6ClassGenerator$decallable_new <- R6ClassGenerator$new
-  # inner_env$make_callable_clone <- make_callable_clone_method
-  # inner_env$make_callable <- make_callable
-  # environment(R6ClassGenerator$make_callable_clone) <- inner_env
-
   callable_new <-
     rlang::new_function(
       rlang::pairlist2(...=),
@@ -78,14 +72,6 @@ make_callable_object_methods <- function(R6ClassGenerator, call_target = ".call"
       env = environment(R6ClassGenerator$decallable_new)
     )
 
-  # callable_new <- function(...){
-  #   uncallable <- decallable_new(...)
-  #   uncallable <- make_callable_clone_method(uncallable,
-  #                                            call_target = call_target)
-  #   make_callable(uncallable, call_target = call_target)
-  # }
-  # environment(callable_new) <-
-  #   environment(R6ClassGenerator$decallable_new)
   R6ClassGenerator$new <- callable_new
   if (is_lock) lockBinding("new", R6ClassGenerator)
   R6ClassGenerator
@@ -93,7 +79,6 @@ make_callable_object_methods <- function(R6ClassGenerator, call_target = ".call"
 
 make_callable_clone_method <- function(R6Object, call_target = ".call"){
   stopifnot(inherits(R6Object,"R6"))
-  # browser()
   is_lock <- rlang::env_is_locked(R6Object)
   if (is_lock) rlang::env_unlock(R6Object)
   unlockBinding("clone", R6Object)
