@@ -71,7 +71,7 @@ print.Caller <- function(x, .hide_target=TRUE, ...){
 
 #' @export
 names.Caller <- function(x){
-  names(environment(x))
+  ls(environment(x))
 }
 
 #' @export
