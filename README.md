@@ -36,6 +36,8 @@ my_list("folks")
 A prettier way to _callme_ is via <code>R6CallClass</code>.
 Call target must be in the public field.
 
+If the call target is <code>NULL</code>, only the generator shall be callable.
+
 ``` r
 MyCallClass <- callme::R6CallClass(classname = "MyCallClass",
                            public = list(
