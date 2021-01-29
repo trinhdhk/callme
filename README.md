@@ -31,7 +31,7 @@ my_list
 #> [1] 3
 my_list("folks")
 #> Hello folks
-names(my_list) # No, you probably won't see my .dots that easily :)
+names(my_list) # No, you probably won't see my .call that easily :)
 #> [1] "a" "b"
 ```
 
