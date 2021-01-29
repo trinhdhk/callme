@@ -106,7 +106,7 @@ with.Caller <- function(x, expr, ...){
 #' De-callable a caller
 #' @description This function decalls a Caller object, exposing what it hides
 #' @param x a caller
-#' @return a de-callable object
+#' @return a list or environment
 #' @export
 decallable <- function(x, ...){
   UseMethod("decallable")
@@ -146,12 +146,25 @@ as.environment.Caller <- function(x){
 }
 
 #' @rdname Caller
+#' @method as.data.frame Caller
+#' @export
+as.data.frame.Caller <- function(x, ...){
+  as.data.frame(as.list(x), ...)
+}
+
+#' Get call target from a Caller
+#' @rdname call_target
+#' @description call_target returns the name of the targetted function.
+#' @param x an object of class "Caller"
+#' @return For \code{call_target}: a character object
 #' @export
 call_target <- function(x){
   attr(x, "call_target")
 }
 
-#' @rdname Caller
+#' @rdname call_target
+#' @description get_call_target returns the function itself.
+#' @return For \code{get_call_target}: a function
 #' @export
 get_call_target <- function(x){
   x[[attr(x, "call_target")]]

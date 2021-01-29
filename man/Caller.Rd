@@ -13,8 +13,7 @@
 \alias{with.Caller}
 \alias{as.list.Caller}
 \alias{as.environment.Caller}
-\alias{call_target}
-\alias{get_call_target}
+\alias{as.data.frame.Caller}
 \title{Methods for Caller object}
 \usage{
 \method{print}{Caller}(x, hide.dots = getOption("hide.dots", default = TRUE), ...)
@@ -41,9 +40,7 @@
 
 \method{as.environment}{Caller}(x)
 
-call_target(x)
-
-get_call_target(x)
+\method{as.data.frame}{Caller}(x, ...)
 }
 \arguments{
 \item{all.names}{default to TRUE, whether to extract all names, see \link[base]{as.list.environment}}

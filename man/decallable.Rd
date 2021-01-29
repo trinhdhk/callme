@@ -10,7 +10,7 @@ decallable(x, ...)
 \item{x}{a caller}
 }
 \value{
-a de-callable object
+a list or environment
 }
 \description{
 This function decalls a Caller object, exposing what it hides
