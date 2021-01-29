@@ -31,6 +31,8 @@ my_list
 #> [1] 3
 my_list("folks")
 #> Hello folks
+names(my_list) # No, you probably won't see my .dots that easily :)
+#> [1] "a" "b"
 ```
 
 A prettier way to _callme_ is via <code>R6CallClass</code>.
