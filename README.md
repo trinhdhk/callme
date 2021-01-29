@@ -1,4 +1,4 @@
-# Making objects callable
+# Making objects callable in R
 
 A proof-of-concept package which convert **R** lists and environments to a (pseudo-)callable objects, just like how **Python** behaves.
 It also includes a special extensions of R6 Class, which produces callable R6 generators and (optionally) callable R6 objects.
