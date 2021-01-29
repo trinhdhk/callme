@@ -28,7 +28,7 @@
 
 \method{[[}{Caller}(x, y, ...)
 
-\method{[[}{Caller}(x, y, ...) <- value
+\method{[[}{Caller}(x, y) <- value
 
 \method{names}{Caller}(x)
 

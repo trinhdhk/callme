@@ -54,9 +54,7 @@ print.Caller <- function(x, hide.dots=getOption("hide.dots", default = TRUE), ..
 #' @method [<- Caller
 #' @export
 `[<-.Caller` <- function(x, y, ..., value){
-  # env <- environment(x)
-  `[<-`(as.list(x), y, ..., value=value)
-  x
+  make_callable(`[<-`(as.list(x), y, ..., value))
 }
 
 #' @rdname Caller
@@ -70,9 +68,14 @@ print.Caller <- function(x, hide.dots=getOption("hide.dots", default = TRUE), ..
 #' @rdname Caller
 #' @method [[<- Caller
 #' @export
-`[[<-.Caller` <- function(x, y, ..., value){
-  # env <- environment(x)
-  `[[<-`(as.list(x), y, ..., value=value)
+`[[<-.Caller` <- function(x, y, value){
+  # browser()
+  env <- environment(x)
+  names.x <- names(as.list(x))
+  for (.y in y){
+    if (is.numeric(.y)) .y <- names.x[[.y]]
+    assign(.y, value, envir = env)
+  }
   x
 }
 
