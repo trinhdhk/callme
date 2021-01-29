@@ -1,11 +1,11 @@
-# Making objects callable
+# Calling My Environment
 
-A proof-of-concept package which convert <code>R</code> lists and environments to a (pseudo-)callable objects, just like how <code>Python</code> behaves.
+A proof-of-concept package which converts **R** lists and environments to a (pseudo-)callable objects, just like how **Python** behaves.
 It also includes a special extensions of R6 Class, which produces callable R6 generators and (optionally) callable R6 objects.
 
-<p style="background:#e6de70">This is an experimental package using brute-force approaches; things can change at any time. More efficient approaches are welcomed.</p>
+**This is an experimental package using brute-force approaches; things can change at any time. More efficient approaches are welcomed.**
 
-<center>![](./inst/MakeCallable.png "callme in action")</center>
+<img src="inst/MakeCallable.png" width="500">
 
 ## Installation
 
@@ -16,7 +16,7 @@ remotes::install_github("trinhdhk/callme", ref="main")
 
 ## Usage
 
-Objects can be created via <code>make_callable</code>.
+The classic way to _callme_ is via <code>make_callable</code>.
 
 ``` r
 my_list <- list(a = 3, b = 4, .call = function(x) cat("Hello", x))
@@ -33,8 +33,10 @@ my_list("folks")
 #> Hello folks
 ```
 
-An callable R6 (generator) object can be created via <code>R6CallClass</code>.
+A prettier way to _callme_ is via <code>R6CallClass</code>.
 Call target must be in the public field.
+
+If the call target is <code>NULL</code>, only the generator shall be callable.
 
 ``` r
 MyCallClass <- callme::R6CallClass(classname = "MyCallClass",
@@ -51,7 +53,7 @@ MyCallClass <- callme::R6CallClass(classname = "MyCallClass",
                                cat("Hello", x)
                                invisible(self)
                              }
-                           ), callable_object_target = c(".call"))
+                           ), callable_object_target = ".call")
 #> This is an experimental package. Use at your own risk.
 
 mycallobj <- MyCallClass()
@@ -62,4 +64,10 @@ mycallobj("folks")
 #> Hello folks
 ```
 
-Prost!
+## Some issues and quirky things
+
+- Element order is reversed. :/
+- **RStudio** has a function for name-indexing and auto-suggestion. The default one, however, does not work. Hence, I had to re-define it with the _exact_ same code.
+- It is completely dependent on provided methods within the package. R6s seem to have no issue in compatibility, but not guaranteed for lists.
+
+_Prost!_
