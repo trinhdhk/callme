@@ -51,7 +51,7 @@ MyCallClass <- callme::R6CallClass(classname = "MyCallClass",
                                cat("Hello", x)
                                invisible(self)
                              }
-                           ), callable_object_target = c(".call"))
+                           ), callable_object_target = ".call")
 #> This is an experimental package. Use at your own risk.
 
 mycallobj <- MyCallClass()
@@ -62,4 +62,9 @@ mycallobj("folks")
 #> Hello folks
 ```
 
-Prost!
+## Some issues and quirky things
+
+- **RStudio** has a function for name-indexing and auto-suggestion. The default one, however, does not work. Hence, I had to re-define it with the _exact_ same code.
+- It is completely dependent on provided methods within the package. R6s seem to have no issue in compatibility, but not guaranteed for lists.
+
+_Prost!_
