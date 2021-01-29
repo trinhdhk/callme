@@ -16,7 +16,7 @@ remotes::install_github("trinhdhk/callme", ref="main")
 
 ## Usage
 
-Classic way to callme is via <code>make_callable</code>.
+The classic way to _callme_ is via <code>make_callable</code>.
 
 ``` r
 my_list <- list(a = 3, b = 4, .call = function(x) cat("Hello", x))
@@ -33,7 +33,7 @@ my_list("folks")
 #> Hello folks
 ```
 
-A prettier way to call me is via <code>R6CallClass</code>.
+A prettier way to _callme_ is via <code>R6CallClass</code>.
 Call target must be in the public field.
 
 ``` r
