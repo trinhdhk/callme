@@ -115,7 +115,7 @@ decallable <- function(x, ...){
 #'@export
 decallable.Caller <- function(x){
   if (attr(x, "origin_state")$mode=="list") decall_to_list(x)
-  else decall_to_environmentt(x)
+  else decall_to_environment(x)
 }
 
 decall_to_list <- function(x){
