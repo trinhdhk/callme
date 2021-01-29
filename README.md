@@ -5,7 +5,7 @@ It also includes a special extensions of R6 Class, which produces callable R6 ge
 
 <p style="background:#e6de70">This is an experimental package using brute-force approaches; things can change at any time. More efficient approaches are welcomed.</p>
 
-<center>![](inst/MakeCallable.png)</center>
+<center>![](./inst/MakeCallable.png "callme in action")</center>
 
 ## Installation
 
