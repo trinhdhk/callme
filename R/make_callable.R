@@ -5,12 +5,14 @@
 #' @return a "Caller" object
 #' @export
 make_callable <- function(x, call_target = ".call"){
+  if (any(grepl("^$", names(x)))) stop("x must be a named list.")
   if (!exists(call_target, x)) stop("No call_target found in x.")
 
   # get the call target
   fn_target <- get(call_target, x)
+  if (is.character(fn_target)) fn_target <- get(fn_target)
   if (mode(fn_target)!="function") stop("call_target must be function.")
-  args <- rlang::fn_fmls(fn_target)
+  args <- if (is.primitive(fn_target)) rlang::pairlist2(...=) else rlang::fn_fmls(fn_target)
 
   # build the wrapper
   if (mode(x) != "environment") caller_env <- list2env(x)
@@ -24,7 +26,7 @@ make_callable <- function(x, call_target = ".call"){
       args,
       rlang::expr({
         args <- as.list(match.call())[-1]
-        call_fn <- !!{{fn_target}}
+        call_fn <- get(!!{{call_target}}, rlang::current_env())
         # call_fn <- get(attr(sys.function(), "call_target"), environment(sys.function()))
         do.call(call_fn, args)
       }), env = caller_env)
