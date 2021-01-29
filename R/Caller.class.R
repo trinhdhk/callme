@@ -20,7 +20,7 @@ print.Caller <- function(x, hide.dots=getOption("hide.dots", default = TRUE), ..
   # obj <- get("x", envir = environment(x))
   cat("Callable object at ")
   print(environment(x), ...)
-  obj <- as.list.environment(environment(x), all.names = !hide.dots)
+  obj <- as.list(x, all.names = !hide.dots)
   print(obj)
   invisible(x)
 }
@@ -46,16 +46,16 @@ print.Caller <- function(x, hide.dots=getOption("hide.dots", default = TRUE), ..
 #' @method [ Caller
 #' @export
 `[.Caller` <- function(x, y, ...){
-  env <- environment(x)
-  `[`(env, y, ...)
+  # env <- environment(x)
+  `[`(as.list(x), y, ...)
 }
 
 #' @rdname Caller
 #' @method [<- Caller
 #' @export
 `[<-.Caller` <- function(x, y, ..., value){
-  env <- environment(x)
-  `[<-`(env, y, ..., value=value)
+  # env <- environment(x)
+  `[<-`(as.list(x), y, ..., value=value)
   x
 }
 
@@ -63,16 +63,16 @@ print.Caller <- function(x, hide.dots=getOption("hide.dots", default = TRUE), ..
 #' @method [[ Caller
 #' @export
 `[[.Caller` <- function(x, y,...){
-  env <- environment(x)
-  `[[`(env, y, ...)
+  # env <- environment(x)
+  `[[`(as.list(x), y, ...)
 }
 
 #' @rdname Caller
 #' @method [[<- Caller
 #' @export
 `[[<-.Caller` <- function(x, y, ..., value){
-  env <- environment(x)
-  `[[<-`(env, y, ..., value=value)
+  # env <- environment(x)
+  `[[<-`(as.list(x), y, ..., value=value)
   x
 }
 
@@ -87,8 +87,8 @@ names.Caller <- function(x){
 #' @method names<- Caller
 #' @export
 `names<-.Caller` <- function(x, value){
-  obj <- environment(x)
-  names(obj) <- value
+  env <- environment(x)
+  names(env) <- value
   x
 }
 
@@ -136,7 +136,7 @@ decall_to_environment <- function(x, ...){
 #' @method as.list Caller
 #' @export
 as.list.Caller <- function(x, all.names=TRUE){
-  as.list.environment(environment(x), all.names = all.names)
+  rev(as.list.environment(environment(x), all.names = all.names))
 }
 
 #' @rdname Caller
