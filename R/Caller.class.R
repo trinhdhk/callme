@@ -97,7 +97,7 @@ names.Caller <- function(x){
 #' @details
 #' The \code{with} method provides a convenient way to expose the inner environment that Caller points to,
 #'  without the need to de-callable it.
-#' This is mainly used for the case where subsetting methods are sufficient
+#' This is mainly used for the case where subsetting methods are insufficient
 #' @export
 with.Caller <- function(x, expr, ...){
   eval(substitute(expr), envir=environment(x), enclos = parent.frame())
@@ -113,26 +113,22 @@ decallable <- function(x, ...){
 }
 
 #'@export
-decallable.Caller <- function(x, ...){
-  decall_to_origin(x, ...)
+decallable.Caller <- function(x){
+  if (attr(x, "origin_state")$mode=="list") decall_to_list(x)
+  else decall_to_environmentt(x)
 }
 
-decall_to_origin <- function(x, ...){
-  UseMethod("decall_to_origin")
-}
-
-decall_to_origin.Caller <- function(x, ...){
-  NextMethod("decall_to_origin", x, ...)
-}
-
-decall_to_origin.list <- function(x, all.names = !getOption("hide.dots", default = TRUE)){
-  origin <- as.list.Caller(x, all.names = all.names)
+decall_to_list <- function(x){
+  origin <- as.list.Caller(x, all.names = TRUE)
   class(origin) <- class(x)[-1]
+  mode(origin) <- attr(x, "origin_state")$mode
+  attributes(origin) <- attr(x, "origin_state")$attr
   origin
 }
 
-decall_to_origin.default <- function(x, ...){
-  environment(x)
+decall_to_environment <- function(x, ...){
+  origin <- environment(x)
+  origin
 }
 
 #' @rdname Caller
@@ -141,4 +137,22 @@ decall_to_origin.default <- function(x, ...){
 #' @export
 as.list.Caller <- function(x, all.names=TRUE){
   as.list.environment(environment(x), all.names = all.names)
+}
+
+#' @rdname Caller
+#' @export
+as.environment.Caller <- function(x){
+  environment(x)
+}
+
+#' @rdname Caller
+#' @export
+call_target <- function(x){
+  attr(x, "call_target")
+}
+
+#' @rdname Caller
+#' @export
+get_call_target <- function(x){
+  x[[attr(x, "call_target")]]
 }

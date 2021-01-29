@@ -10,7 +10,6 @@ make_callable <- function(x, call_target = ".call"){
   # get the call target
   fn_target <- get(call_target, x)
   if (mode(fn_target)!="function") stop("call_target must be function.")
-
   args <- rlang::fn_fmls(fn_target)
 
   # build the wrapper
@@ -31,6 +30,7 @@ make_callable <- function(x, call_target = ".call"){
       }), env = caller_env)
 
   class(caller) <- c("Caller", class(x))
+  attr(caller, "origin_state") <- list(attr = attributes(x), mode = mode(x))
   attr(caller, "call_target") <- call_target
   caller
 }

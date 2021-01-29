@@ -12,6 +12,9 @@
 \alias{names<-.Caller}
 \alias{with.Caller}
 \alias{as.list.Caller}
+\alias{as.environment.Caller}
+\alias{call_target}
+\alias{get_call_target}
 \title{Methods for Caller object}
 \usage{
 \method{print}{Caller}(x, hide.dots = getOption("hide.dots", default = TRUE), ...)
@@ -35,6 +38,12 @@
 \method{with}{Caller}(x, expr, ...)
 
 \method{as.list}{Caller}(x, all.names = TRUE)
+
+\method{as.environment}{Caller}(x)
+
+call_target(x)
+
+get_call_target(x)
 }
 \arguments{
 \item{all.names}{default to TRUE, whether to extract all names, see \link[base]{as.list.environment}}
@@ -45,5 +54,5 @@ Methods for Caller object
 \details{
 The \code{with} method provides a convenient way to expose the inner environment that Caller points to,
  without the need to de-callable it.
-This is mainly used for the case where subsetting methods are sufficient
+This is mainly used for the case where subsetting methods are insufficient
 }
