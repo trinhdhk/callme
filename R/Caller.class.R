@@ -90,9 +90,8 @@ names.Caller <- function(x){
 #' @method names<- Caller
 #' @export
 `names<-.Caller` <- function(x, value){
-  env <- environment(x)
-  names(env) <- value
-  x
+  stopifnot(length(as.list(x)) == length(value))
+  make_callable(`names<-`(as.list(x), value))
 }
 
 #' @rdname Caller
