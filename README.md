@@ -1,4 +1,4 @@
-# Making objects callable in R
+# Calling My Environment
 
 A proof-of-concept package which convert **R** lists and environments to a (pseudo-)callable objects, just like how **Python** behaves.
 It also includes a special extensions of R6 Class, which produces callable R6 generators and (optionally) callable R6 objects.
@@ -16,7 +16,7 @@ remotes::install_github("trinhdhk/callme", ref="main")
 
 ## Usage
 
-Objects can be created via <code>make_callable</code>.
+Classic way to callme is via <code>make_callable</code>.
 
 ``` r
 my_list <- list(a = 3, b = 4, .call = function(x) cat("Hello", x))
@@ -33,7 +33,7 @@ my_list("folks")
 #> Hello folks
 ```
 
-An callable R6 (generator) object can be created via <code>R6CallClass</code>.
+A prettier way to call me is via <code>R6CallClass</code>.
 Call target must be in the public field.
 
 ``` r
