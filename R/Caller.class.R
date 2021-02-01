@@ -1,8 +1,8 @@
 #' Methods for R6Caller object
-#' @rdname R6Caller
-#' @method print R6Caller
+#' @rdname R6_Caller
+#' @method print R6_Caller
 #' @export
-print.R6Caller <- function(x,...){
+print.R6_Caller <- function(x,...){
   has_print_method <- is.function(environment(x)$print)
   if (has_print_method) print(environment(x), ...)
   else {
