@@ -39,7 +39,7 @@ R6CallClass <-
     }
     callable_generator <- make_callable(uncallable_generator, "new")
     class(callable_generator) <- c(
-      "R6Caller",
+      "R6_Caller",
       class(callable_generator))
     callable_generator
   }
@@ -63,8 +63,8 @@ make_callable_object_methods <- function(R6ClassGenerator, call_target = ".call"
           callable <- make_callable(uncallable, call_target = !!{{call_target}})
           class(callable) <- c(
             class(uncallable)[-length(class(uncallable))],
-            "R6Caller", "Caller",
-            class(uncallable)[length(class(uncallable))]
+            "R6_Caller", "Caller"
+            # class(uncallable)[length(class(uncallable))]
           )
           callable
         }
