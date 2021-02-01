@@ -68,7 +68,7 @@ mycallobj("folks")
 
 ## Some issues and quirky things
 
-- Element order is reversed. :/
+- ~~Element order is reversed. :/~~
 - **RStudio** has a function for name-indexing and auto-suggestion. The default one, however, does not work. Hence, I had to re-define it with the _exact_ same code.
 - It is completely dependent on provided methods within the package. R6s seem to have no issue in compatibility, but not guaranteed for lists.
 
