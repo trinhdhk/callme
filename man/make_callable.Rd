@@ -4,7 +4,7 @@
 \alias{make_callable}
 \title{Generate a callable subsettable object}
 \usage{
-make_callable(x, call_target = ".call", self)
+make_callable(x, call_target = ".call")
 }
 \arguments{
 \item{x}{an subsettable object}

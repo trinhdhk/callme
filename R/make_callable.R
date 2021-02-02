@@ -4,7 +4,7 @@
 #' @param call_target the target binding for the caller; must be function.
 #' @return a "Caller" object
 #' @export
-make_callable <- function(x, call_target = ".call", self){
+make_callable <- function(x, call_target = ".call"){
   if (any(grepl("^$", names(x)))) stop("x must be a named list.")
   if (!exists(call_target, x)) stop("No call_target found in x.")
 
@@ -27,6 +27,7 @@ make_callable <- function(x, call_target = ".call", self){
         do.call(call_fn, args)
       }), env = envs$caller_env)
 
+  if (mode(x) == "environment") class(environment(caller)) <- class(x)
   class(caller) <- c(paste(class(x),"Caller", sep="_"), "Caller")
   attr(caller, "origin_state") <- list(attr = attributes(x), mode = mode(x))
   attr(caller, "call_target") <- call_target
@@ -44,7 +45,10 @@ set_caller_env <- function(x, fn_target){
 #' @method set_caller_env list
 set_caller_env.list <- function(x, ...){
   env <- list2env(x)
-  list(target_env = env, caller_env = env)
+  list(
+    target_env = env,
+    caller_env = env
+  )
 }
 
 #' @method set_caller_env environment
@@ -55,8 +59,10 @@ set_caller_env.environment <-
   set_caller_env.R6ClassGenerator <-
   function(x, fn_target){
   list(
-    target_env = environment(fn_target),
-    caller_env = x
+    target_env = x,
+    caller_env = if (identical(parent.env(x),emptyenv()))
+      rlang::env_clone(x, baseenv())
+    else x
   )
 }
 
