@@ -4,7 +4,7 @@ Title: A callable object and R6 Object
 Version: 0.0.1
 Author: Trinh Dong<trinhdhk@oucru.org>
 Maintainer: Trinh Dong<trinhdhk@oucru.org>
-Description: Package to create callable objects
+Description: Package to create callable objects.
 Depends:
   rlang,
   R6
@@ -12,3 +12,6 @@ License: MIT
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
