@@ -83,7 +83,7 @@ print.Caller <- function(x, hide.dots=getOption("hide.dots", default = TRUE), ..
 #' @method names Caller
 #' @export
 names.Caller <- function(x){
-  ls(environment(x), all.names = !getOption("hide.dots", default = TRUE))
+  rev(ls(environment(x), all.names = !getOption("hide.dots", default = TRUE), sorted=FALSE))
 }
 
 #' @rdname Caller
@@ -91,7 +91,8 @@ names.Caller <- function(x){
 #' @export
 `names<-.Caller` <- function(x, value){
   stopifnot(length(as.list(x)) == length(value))
-  make_callable(`names<-`(as.list(x), value))
+  # list_x <- as.list(x, all.names = TRUE)C
+  make_callable(`names<-`(as.list(x, all.names = TRUE), value))
 }
 
 #' @rdname Caller
@@ -138,7 +139,7 @@ decall_to_environment <- function(x, ...){
 #' @method as.list Caller
 #' @export
 as.list.Caller <- function(x, all.names=TRUE){
-  rev(as.list.environment(environment(x), all.names = all.names))
+  rev(as.list.environment(environment(x), all.names = all.names, sorted = FALSE))
 }
 
 #' @rdname Caller
