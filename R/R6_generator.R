@@ -92,7 +92,7 @@ make_callable_clone_method <- function(R6Object, call_target = ".call"){
         callable <- make_callable(uncallable, call_target = !!{{call_target}})
         class(callable) <- c(
           class(uncallable)[-length(class(uncallable))],
-          "R6Caller", "Caller",
+          "R6_Caller", "Caller",
           class(uncallable)[length(class(uncallable))]
         )
         callable
