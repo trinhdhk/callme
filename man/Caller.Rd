@@ -10,6 +10,7 @@
 \alias{[[<-.Caller}
 \alias{names.Caller}
 \alias{names<-.list_Caller}
+\alias{names<-.Caller}
 \alias{with.Caller}
 \alias{as.list.Caller}
 \alias{as.environment.Caller}
@@ -33,6 +34,8 @@
 \method{names}{Caller}(x)
 
 \method{names}{list_Caller}(x) <- value
+
+\method{names}{Caller}(x, ...) <- value
 
 \method{with}{Caller}(x, expr, ...)
 

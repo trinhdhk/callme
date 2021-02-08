@@ -102,6 +102,14 @@ names.Caller <- function(x){
 }
 
 #' @rdname Caller
+#' @method names<- Caller
+#' @export
+`names<-.Caller` <- function(x, value, ...){
+  # pass to the method within x
+  `names<-`(target(x), value, ...)
+}
+
+#' @rdname Caller
 #' @method with Caller
 #' @details
 #' The \code{with} method provides a convenient way to expose the inner environment that Caller points to,
