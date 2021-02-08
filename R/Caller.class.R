@@ -18,7 +18,7 @@ print.R6_Caller <- function(x,...){
 #' @export
 print.Caller <- function(x, hide.dots=getOption("hide.dots", default = TRUE), ...){
   # obj <- get("x", envir = environment(x))
-  cat("Callable object at ")
+  cat("Callable object targetting ")
   print(target(x), ...)
   obj <- as.list(x, all.names = !hide.dots)
   print(obj)
