@@ -18,3 +18,13 @@ test_that("callable methods works", {
   expect_identical(env1, env2)
   expect_identical(env1, env3)
 })
+
+test_that("sanity recovery is robust", {
+  l <- list(o=3, r=5, d=4, e=1, r2=list(0), .call=`+`)
+  mycall <- make_callable(l)
+  expect_equal(mycall(3,4), 7)
+  attr(mycall, "call_target") <- NULL
+  expect_warning(mycall(3,4))
+  expect_equal(mycall(3,4), 7)
+  expect_equal(attr(mycall, "call_target"), ".call")
+})

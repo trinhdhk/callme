@@ -36,13 +36,26 @@ make_caller <- function(x, args, caller_env, call_target){
   # copy the arguments from the targetted function
   args <- if (is.primitive(fn_target)) rlang::pairlist2(...=) else rlang::fn_fmls(fn_target)
 
+  # Caller function receives the same arguments as its target
+  # Will check for target by
+  #    - attributes "call_target"
+  #    - if no attributes, give a warning
+  # And get the call_target function within the target_env
+  # situated within the caller_env
   caller <- rlang::new_function(
     args,
     rlang::expr({
       args <- as.list(match.call())[-1]
-      call_target <-
-        if (length(attr(sys.function(), "call_target"))) attr(sys.function(), "call_target")
-      else !!{{call_target}}
+      if (length(attr(sys.function(), "call_target")))
+        call_target <- attr(sys.function(), "call_target")
+      else {
+        warning("Missing target in attributes. The object might be manipulated! Trying to recover it! Some function might not work as expected.")
+        call_target <- !!{{call_target}}
+        tryCatch({
+          fn_call <- as.character(sys.call()[[1]])
+          eval(parse(text=paste0("attr(", fn_call, ", 'call_target') <- '", call_target, "'")), envir = parent.frame())
+        }, error=function(e) print(e))
+      }
       target_env <- environment(sys.function())$.__target_env__
       call_fn <- get(call_target, target_env)
       do.call(call_fn, args)
