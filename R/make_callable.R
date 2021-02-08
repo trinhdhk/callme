@@ -39,7 +39,7 @@ make_caller <- function(x, args, caller_env, call_target){
   # Caller function receives the same arguments as its target
   # Will check for target by
   #    - attributes "call_target"
-  #    - if no attributes, give a warning
+  #    - if no attributes, give a warning and recover
   # And get the call_target function within the target_env
   # situated within the caller_env
   caller <- rlang::new_function(
