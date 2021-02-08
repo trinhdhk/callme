@@ -58,12 +58,12 @@ make_callable_object_methods <- function(R6ClassGenerator, call_target = ".call"
           uncallable <- decallable_new(...)
           make_callable_clone_method <- !!{{make_callable_clone_method}}
           make_callable <- !!{{make_callable}}
-          make_active_binding <- !!{{make_active_binding}}
+          # make_active_binding <- !!{{make_active_binding}}
           uncallable <-
             make_callable_clone_method(uncallable,
                                        call_target = !!{{call_target}})
           callable <- make_callable(uncallable, call_target = !!{{call_target}})
-          callable <- make_active_binding(callable)
+          # callable <- make_active_binding(callable)
           class(callable) <- c(
             class(uncallable)[-length(class(uncallable))],
             "R6_Caller", "Caller"
@@ -92,9 +92,9 @@ make_callable_clone_method <- function(R6Object, call_target = ".call"){
       rlang::expr({
         uncallable <- self$decallable_clone(...)
         make_callable <- !!{{make_callable}}
-        make_active_binding <- !!{{make_active_binding}}
+        # make_active_binding <- !!{{make_active_binding}}
         callable <- make_callable(uncallable, call_target = !!{{call_target}})
-        callable <- make_active_binding(callable)
+        # callable <- make_active_binding(callable)
         class(callable) <- c(
           class(uncallable)[-length(class(uncallable))],
           "R6Caller", "Caller",

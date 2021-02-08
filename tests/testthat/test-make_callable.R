@@ -15,8 +15,8 @@ test_that("make_callable is okay for list and environment", {
   expect_named(call_list, c("a", "b"))
   expect_named(call_env, c("a", "b"))
   options(hide.dots = F)
-  expect_named(call_list, c(".callme", "a", "b"))
-  expect_named(call_env, c(".callme", "a", "b"))
+  expect_named(call_list, c("a", "b", ".callme"))
+  expect_named(call_env, c("a", "b", ".callme"))
 })
 
 test_that("R6CallClass is okay", {
