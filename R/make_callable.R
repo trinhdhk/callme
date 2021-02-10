@@ -29,12 +29,12 @@ make_bind_env <- function(x, envir, reset = FALSE){
 }
 
 make_meta_env <- function(meta, envir){
-  if (!exists(".__meta_env__", envir = envir)){
-    assign(".__meta_env__", new.env(hash=FALSE, parent=emptyenv()), envir = envir)
-    list2env(meta, envir = envir$.__meta_env__)
-    for (sym in ls(envir$.__meta_env__, all.names = TRUE))
-      lockBinding(sym, envir$.__meta_env__)
-    lockEnvironment(envir$.__meta_env__)
+  if (!exists(".__meta_lock__", envir = envir)){
+    assign(".__meta_lock__", new.env(hash=FALSE, parent=emptyenv()), envir = envir)
+    list2env(meta, envir = envir$.__meta_lock__)
+    for (sym in ls(envir$.__meta_lock__, all.names = TRUE))
+      lockBinding(sym, envir$.__meta_lock__)
+    lockEnvironment(envir$.__meta_lock__)
   }
 }
 
@@ -47,9 +47,6 @@ make_caller <- function(x, args, caller_env, call_target){
   args <- if (is.primitive(fn_target)) rlang::pairlist2(...=) else rlang::fn_fmls(fn_target)
 
   # Caller function receives the same arguments as its target
-  # Will check for target by
-  #    - attributes "call_target"
-  #    - if no attributes, give a warning and recover
   # And get the call_target function within the target_env
   # situated within the caller_env
   caller <- rlang::new_function(
@@ -63,7 +60,6 @@ make_caller <- function(x, args, caller_env, call_target){
     }), env = caller_env)
 
   class(caller) <- c(paste(class(x), "Caller", sep="_"), "Caller")
-  # attr(caller, "call_target") <- call_target
   caller
 }
 
@@ -71,7 +67,9 @@ make_callable_env <- function(x, caller_env, call_target = call_target(x), reset
   # -- if x is list, expose x to a new environment (list2env)
   # -- otherwise set x as target
   make_bind_env(x, caller_env, reset = reset)
-  make_meta_env(list(call_target = call_target), caller_env)
+  make_meta_env(
+    list(call_target = call_target, orig_state = list(attr = attributes(x), mode = mode(x))),
+    caller_env)
 
   # create the caller
   make_caller(x, args, caller_env, call_target)

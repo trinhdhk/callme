@@ -30,6 +30,7 @@ print.Caller <- function(x, hide.dots=getOption("hide.dots", default = TRUE), ..
 #' @export
 `$.Caller` <- function(x, y){
   env <- target(x)
+  y <- grep(y, ls(env, all.names = TRUE))
   get(y, envir=env)
 }
 
@@ -192,5 +193,5 @@ target <- function(x){
 }
 
 meta <- function(x){
-  get(".__meta_env__", environment(x))
+  get(".__meta_lock__", environment(x))
 }
