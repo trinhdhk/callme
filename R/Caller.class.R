@@ -56,7 +56,7 @@ print.Caller <- function(x, hide.dots=getOption("hide.dots", default = TRUE), ..
 `[<-.Caller` <- function(x, y, ..., value){
   make_callable_env(`[<-`(as.list(x), y, ..., value),
                     caller_env = environment(x),
-                    call_target = attr(x, "call_target"),
+                    call_target = call_target(x),
                     reset = TRUE)
 }
 
@@ -94,10 +94,10 @@ names.Caller <- function(x){
 #' @export
 `names<-.list_Caller` <- function(x, value){
   if (length(value) < length(as.list(x)) && getOption("hide.dots", default = TRUE))
-    value <- c(value, attr(x, "call_target"))
+    value <- c(value, call_target(x))
   make_callable_env(`names<-`(as.list(x, all.names = TRUE), value),
                     caller_env  = environment(x),
-                    call_target = attr(x, "call_target"),
+                    call_target = call_target(x),
                     reset = TRUE)
 }
 
@@ -176,7 +176,7 @@ as.data.frame.Caller <- function(x, ...){
 #' @return For \code{call_target}: a character object
 #' @export
 call_target <- function(x){
-  attr(x, "call_target")
+  get("call_target", meta(x))
 }
 
 #' @rdname call_target
@@ -184,9 +184,13 @@ call_target <- function(x){
 #' @return For \code{get_call_target}: a function
 #' @export
 get_call_target <- function(x){
-  x[[attr(x, "call_target")]]
+  x[[get("call_target", meta(x))]]
 }
 
 target <- function(x){
   get(".__target_env__", environment(x))
+}
+
+meta <- function(x){
+  get(".__meta_env__", environment(x))
 }

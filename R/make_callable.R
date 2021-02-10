@@ -28,6 +28,16 @@ make_bind_env <- function(x, envir, reset = FALSE){
   }
 }
 
+make_meta_env <- function(meta, envir){
+  if (!exists(".__meta_env__", envir = envir)){
+    assign(".__meta_env__", new.env(hash=FALSE, parent=emptyenv()), envir = envir)
+    list2env(meta, envir = envir$.__meta_env__)
+    for (sym in ls(envir$.__meta_env__, all.names = TRUE))
+      lockBinding(sym, envir$.__meta_env__)
+    lockEnvironment(envir$.__meta_env__)
+  }
+}
+
 make_caller <- function(x, args, caller_env, call_target){
   # get the call target
   fn_target <- get(call_target, x)
@@ -46,29 +56,22 @@ make_caller <- function(x, args, caller_env, call_target){
     args,
     rlang::expr({
       args <- as.list(match.call())[-1]
-      if (length(attr(sys.function(), "call_target")))
-        call_target <- attr(sys.function(), "call_target")
-      else {
-        warning("Missing target in attributes. The object might be manipulated! Trying to recover it! Some function might not work as expected.")
-        call_target <- !!{{call_target}}
-        tryCatch({
-          fn_call <- as.character(sys.call()[[1]])
-          eval(parse(text=paste0("attr(", fn_call, ", 'call_target') <- '", call_target, "'")), envir = parent.frame())
-        }, error=function(e) print(e))
-      }
+      call_target <- call_target(sys.function())
       target_env <- environment(sys.function())$.__target_env__
       call_fn <- get(call_target, target_env)
       do.call(call_fn, args)
     }), env = caller_env)
+
   class(caller) <- c(paste(class(x), "Caller", sep="_"), "Caller")
-  attr(caller, "call_target") <- call_target
+  # attr(caller, "call_target") <- call_target
   caller
 }
 
-make_callable_env <- function(x, caller_env, call_target = attr(x, "call_target"), reset = FALSE){
+make_callable_env <- function(x, caller_env, call_target = call_target(x), reset = FALSE){
   # -- if x is list, expose x to a new environment (list2env)
   # -- otherwise set x as target
   make_bind_env(x, caller_env, reset = reset)
+  make_meta_env(list(call_target = call_target), caller_env)
 
   # create the caller
   make_caller(x, args, caller_env, call_target)
