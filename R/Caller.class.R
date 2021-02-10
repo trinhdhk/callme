@@ -123,28 +123,23 @@ with.Caller <- function(x, expr, ...){
 #' De-callable a caller
 #' @description This function decalls a Caller object, exposing what it hides
 #' @param x a caller
-#' @return a list or environment
+#' @return if originally x is a list, a list; otherwise, an environment
 #' @export
-decallable <- function(x, ...){
-  UseMethod("decallable")
+deCallable <- function(x, ...){
+  UseMethod("deCallable")
 }
 
 #'@export
-decallable.Caller <- function(x){
-  if (attr(x, "origin_state")$mode=="list") decall_to_list(x)
-  else decall_to_environment(x)
+deCallable.Caller <- function(x){
+  orig_state <- meta(x)$orig_state
+  if (orig_state$mode=="list") decall_to_list(x)
+  else as.environment.Caller(x)
 }
 
 decall_to_list <- function(x){
   origin <- as.list.Caller(x, all.names = TRUE)
-  class(origin) <- class(x)[-1]
-  mode(origin) <- attr(x, "origin_state")$mode
-  attributes(origin) <- attr(x, "origin_state")$attr
-  origin
-}
-
-decall_to_environment <- function(x, ...){
-  origin <- target(x)
+  orig_state <- meta(x)$orig_state
+  attributes(origin) <- orig_state$attr
   origin
 }
 
@@ -184,7 +179,7 @@ call_target <- function(x){
 #' @return For \code{get_call_target}: a function
 #' @export
 get_call_target <- function(x){
-  x[[get("call_target", meta(x))]]
+  x[[call_target(x)]]
 }
 
 target <- function(x){
