@@ -3,11 +3,11 @@
 #' @method print R6_Caller
 #' @export
 print.R6_Caller <- function(x,...){
-  has_print_method <- is.function(environment(x)$print)
-  if (has_print_method) print(environment(x), ...)
+  has_print_method <- is.function(target(x)$print)
+  if (has_print_method) print(target(x), ...)
   else {
     cat("Callable() R6 object\n")
-    print(environment(x), ...)
+    print(target(x), ...)
   }
   invisible(x)
 }
@@ -18,8 +18,8 @@ print.R6_Caller <- function(x,...){
 #' @export
 print.Caller <- function(x, hide.dots=getOption("hide.dots", default = TRUE), ...){
   # obj <- get("x", envir = environment(x))
-  cat("Callable object at ")
-  print(environment(x), ...)
+  cat("Callable object targetting ")
+  print(target(x), ...)
   obj <- as.list(x, all.names = !hide.dots)
   print(obj)
   invisible(x)
@@ -29,15 +29,15 @@ print.Caller <- function(x, hide.dots=getOption("hide.dots", default = TRUE), ..
 #' @method $ Caller
 #' @export
 `$.Caller` <- function(x, y){
-  env <- environment(x)
-  get(y, envir=env)
+  env <- target(x)
+  eval(rlang::expr(`$`(env,!!{{y}})))
 }
 
 #' @rdname Caller
 #' @method $<- Caller
 #' @export
 `$<-.Caller` <- function(x, y, value){
-  env <- environment(x)
+  env <- target(x)
   assign(y, value, envir = env)
   x
 }
@@ -54,7 +54,10 @@ print.Caller <- function(x, hide.dots=getOption("hide.dots", default = TRUE), ..
 #' @method [<- Caller
 #' @export
 `[<-.Caller` <- function(x, y, ..., value){
-  make_callable(`[<-`(as.list(x), y, ..., value))
+  make_callable_env(`[<-`(as.list(x), y, ..., value),
+                    caller_env = environment(x),
+                    call_target = call_target(x),
+                    reset = TRUE)
 }
 
 #' @rdname Caller
@@ -70,7 +73,7 @@ print.Caller <- function(x, hide.dots=getOption("hide.dots", default = TRUE), ..
 #' @export
 `[[<-.Caller` <- function(x, y, value){
   # browser()
-  env <- environment(x)
+  env <- target(x)
   names.x <- names(as.list(x))
   for (.y in y){
     if (is.numeric(.y)) .y <- names.x[[.y]]
@@ -83,15 +86,27 @@ print.Caller <- function(x, hide.dots=getOption("hide.dots", default = TRUE), ..
 #' @method names Caller
 #' @export
 names.Caller <- function(x){
-  ls(environment(x), all.names = !getOption("hide.dots", default = TRUE))
+  rev(ls(target(x), all.names = !getOption("hide.dots", default = TRUE), sorted=FALSE))
+}
+
+#' @rdname Caller
+#' @method names<- list_Caller
+#' @export
+`names<-.list_Caller` <- function(x, value){
+  if (length(value) < length(as.list(x)) && getOption("hide.dots", default = TRUE))
+    value <- c(value, call_target(x))
+  make_callable_env(`names<-`(as.list(x, all.names = TRUE), value),
+                    caller_env  = environment(x),
+                    call_target = call_target(x),
+                    reset = TRUE)
 }
 
 #' @rdname Caller
 #' @method names<- Caller
 #' @export
-`names<-.Caller` <- function(x, value){
-  stopifnot(length(as.list(x)) == length(value))
-  make_callable(`names<-`(as.list(x), value))
+`names<-.Caller` <- function(x, value, ...){
+  # pass to the method within x
+  `names<-`(target(x), value, ...)
 }
 
 #' @rdname Caller
@@ -102,34 +117,29 @@ names.Caller <- function(x){
 #' This is mainly used for the case where subsetting methods are insufficient
 #' @export
 with.Caller <- function(x, expr, ...){
-  eval(substitute(expr), envir=environment(x), enclos = parent.frame())
+  eval(substitute(expr), envir=target(x), enclos = parent.frame())
 }
 
 #' De-callable a caller
 #' @description This function decalls a Caller object, exposing what it hides
 #' @param x a caller
-#' @return a list or environment
+#' @return if originally x is a list, a list; otherwise, an environment
 #' @export
-decallable <- function(x, ...){
-  UseMethod("decallable")
+deCallable <- function(x, ...){
+  UseMethod("deCallable")
 }
 
 #'@export
-decallable.Caller <- function(x){
-  if (attr(x, "origin_state")$mode=="list") decall_to_list(x)
-  else decall_to_environment(x)
+deCallable.Caller <- function(x){
+  orig_state <- meta(x)$orig_state
+  if (orig_state$mode=="list") decall_to_list(x)
+  else as.environment.Caller(x)
 }
 
 decall_to_list <- function(x){
   origin <- as.list.Caller(x, all.names = TRUE)
-  class(origin) <- class(x)[-1]
-  mode(origin) <- attr(x, "origin_state")$mode
-  attributes(origin) <- attr(x, "origin_state")$attr
-  origin
-}
-
-decall_to_environment <- function(x, ...){
-  origin <- environment(x)
+  orig_state <- meta(x)$orig_state
+  attributes(origin) <- orig_state$attr
   origin
 }
 
@@ -138,13 +148,13 @@ decall_to_environment <- function(x, ...){
 #' @method as.list Caller
 #' @export
 as.list.Caller <- function(x, all.names=TRUE){
-  rev(as.list.environment(environment(x), all.names = all.names))
+  rev(as.list.environment(target(x), all.names = all.names, sorted = FALSE))
 }
 
 #' @rdname Caller
 #' @export
 as.environment.Caller <- function(x){
-  environment(x)
+  target(x)
 }
 
 #' @rdname Caller
@@ -161,7 +171,7 @@ as.data.frame.Caller <- function(x, ...){
 #' @return For \code{call_target}: a character object
 #' @export
 call_target <- function(x){
-  attr(x, "call_target")
+  get("call_target", meta(x))
 }
 
 #' @rdname call_target
@@ -169,5 +179,13 @@ call_target <- function(x){
 #' @return For \code{get_call_target}: a function
 #' @export
 get_call_target <- function(x){
-  x[[attr(x, "call_target")]]
+  x[[call_target(x)]]
+}
+
+target <- function(x){
+  get(".__target_env__", environment(x))
+}
+
+meta <- function(x){
+  get(".__meta_lock__", environment(x))
 }

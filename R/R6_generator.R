@@ -26,7 +26,8 @@ R6CallClass <-
                   cloneable = cloneable,
                   # parent_env = parent_env,
                   ...)
-
+    if (!exists(callable_object_target, public))
+      stop("callable_object_target must be within public methods!")
     # browser()
     if (length(callable_object_target) >= 1){
       if (length(callable_object_target) > 1){
@@ -64,7 +65,6 @@ make_callable_object_methods <- function(R6ClassGenerator, call_target = ".call"
           class(callable) <- c(
             class(uncallable)[-length(class(uncallable))],
             "R6_Caller", "Caller"
-            # class(uncallable)[length(class(uncallable))]
           )
           callable
         }
@@ -88,11 +88,11 @@ make_callable_clone_method <- function(R6Object, call_target = ".call"){
       args = rlang::pairlist2(...=),
       rlang::expr({
         uncallable <- self$decallable_clone(...)
+        make_callable <- !!{{make_callable}}
         callable <- make_callable(uncallable, call_target = !!{{call_target}})
-
         class(callable) <- c(
           class(uncallable)[-length(class(uncallable))],
-          "R6Caller", "Caller",
+          "R6_Caller", "Caller",
           class(uncallable)[length(class(uncallable))]
         )
         callable
@@ -104,3 +104,4 @@ make_callable_clone_method <- function(R6Object, call_target = ".call"){
   if (is_lock) rlang::env_lock(R6Object)
   R6Object
 }
+
