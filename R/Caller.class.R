@@ -30,7 +30,7 @@ print.Caller <- function(x, hide.dots=getOption("hide.dots", default = TRUE), ..
 #' @export
 `$.Caller` <- function(x, y){
   env <- target(x)
-  y <- grep(y, ls(env, all.names = TRUE))
+  y <- grep(paste0("^",y), ls(env, all.names = TRUE), value = TRUE)
   get(y, envir=env)
 }
 
